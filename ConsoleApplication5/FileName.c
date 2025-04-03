@@ -16,58 +16,57 @@ typedef struct {
 int money = 0;
 int hour = 0;
 int day = 0;
+int winStatus = 0; //10ë§Œì›ì„ ëª¨ì•˜ìœ¼ë©´ 1
 
 Asset shops[NUM_SHOPS] = {
-    {"°¡°Ô1", 1000, 100, 0},
-    {"°¡°Ô2", 3000, 300, 0},
-    {"°¡°Ô3", 5000, 500, 0}
+    {"ê°€ê²Œ1", 1000, 100, 0},
+    {"ê°€ê²Œ2", 3000, 300, 0},
+    {"ê°€ê²Œ3", 5000, 500, 0}
 };
 
 Asset buildings[NUM_BUILDINGS] = {
-    {"°Ç¹°1", 10000, 200, 0},
-    {"°Ç¹°2", 30000, 400, 0},
-    {"°Ç¹°3", 50000, 600, 0}
+    {"ê±´ë¬¼1", 10000, 200, 0},
+    {"ê±´ë¬¼2", 30000, 400, 0},
+    {"ê±´ë¬¼3", 50000, 600, 0}
 };
 
-// ½Ã°£ Áõ°¡ ÇÔ¼ö
+// ì‹œê°„ ì¦ê°€ í•¨ìˆ˜
 void passTime() {
     hour++;
     if (hour == 24) {
         hour = 0;
         day++;
-        //20% È®·ü·Î 1000¿ø Áö±Ş
+        //20% í™•ë¥ ë¡œ 1000ì› ì§€ê¸‰
         int chance = rand() % 100;
-        if (chance < 20) { // 20% È®·ü
+        if (chance < 20) { // 20% í™•ë¥ 
             money += 1000;
-            printf("[Çà¿î º¸³Ê½º] ÇÏ·ç°¡ Áö³ª°í 1000¿øÀ» ¾ò¾ú½À´Ï´Ù!\n");
+            printf("[í–‰ìš´ ë³´ë„ˆìŠ¤] í•˜ë£¨ê°€ ì§€ë‚˜ê³  1000ì›ì„ ì–»ì—ˆìŠµë‹ˆë‹¤!\n");
         }
     }
 
-    
-
-    // ¼öÀÔ °è»ê
+    // ìˆ˜ì… ê³„ì‚°
     for (int i = 0; i < NUM_SHOPS; i++) {
         if (shops[i].owned) {
-            money += shops[i].incomePerHour;
+            money += shops[i].incomePerHour * shops[i].owned;
         }
     }
     for (int i = 0; i < NUM_BUILDINGS; i++) {
         if (buildings[i].owned) {
-            money += buildings[i].incomePerHour;
+            money += buildings[i].incomePerHour * buildings[i].owned;
         }
     }
 }
 
-// »óÅÂ Ãâ·Â
+// ìƒíƒœ ì¶œë ¥
 void showStatus() {
-    printf("\n[ÇöÀç »óÅÂ] µ·: %d¿ø | ½Ã°£: %dÀÏ %d½Ã\n", money, day, hour);
+    printf("\n[í˜„ì¬ ìƒíƒœ] ëˆ: %dì› | ì‹œê°„: %dì¼ %dì‹œ\n", money, day, hour);
 }
 
-// °¡°Ô ±¸¸Å
+// ê°€ê²Œ êµ¬ë§¤
 void buyShop() {
-    printf("±¸¸ÅÇÒ °¡°Ô¸¦ ¼±ÅÃÇÏ¼¼¿ä:\n");
+    printf("êµ¬ë§¤í•  ê°€ê²Œë¥¼ ì„ íƒí•˜ì„¸ìš”:\n");
     for (int i = 0; i < NUM_SHOPS; i++) {
-        printf("%d. %s - °¡°İ: %d¿ø / ½Ã°£´ç ¼öÀÔ: %d¿ø\n", i + 1, shops[i].name, shops[i].price, shops[i].incomePerHour);
+        printf("%d. %s - ê°€ê²©: %dì› / ì‹œê°„ë‹¹ ìˆ˜ì…: %dì›\n", i + 1, shops[i].name, shops[i].price, shops[i].incomePerHour);
     }
     int choice;
     scanf_s("%d", &choice);
@@ -75,24 +74,24 @@ void buyShop() {
         Asset* shop = &shops[choice - 1];
         if (money >= shop->price) {
             money -= shop->price;
-            shop->owned = 1;
-            printf("%s¸¦ ±¸¸ÅÇß½À´Ï´Ù!\n", shop->name);
+            shop->owned++;
+            printf("%së¥¼ êµ¬ë§¤í–ˆìŠµë‹ˆë‹¤!\n", shop->name);
         }
         else {
-            printf("µ·ÀÌ ºÎÁ·ÇÕ´Ï´Ù!\n");
+            printf("ëˆì´ ë¶€ì¡±í•©ë‹ˆë‹¤!\n");
         }
     }
     else {
-        printf("Àß¸øµÈ ¼±ÅÃÀÔ´Ï´Ù!\n");
+        printf("ì˜ëª»ëœ ì„ íƒì…ë‹ˆë‹¤!\n");
     }
     passTime();
 }
 
-// °Ç¹° ±¸¸Å
+// ê±´ë¬¼ êµ¬ë§¤
 void buyBuilding() {
-    printf("±¸¸ÅÇÒ °Ç¹°À» ¼±ÅÃÇÏ¼¼¿ä:\n");
+    printf("êµ¬ë§¤í•  ê±´ë¬¼ì„ ì„ íƒí•˜ì„¸ìš”:\n");
     for (int i = 0; i < NUM_BUILDINGS; i++) {
-        printf("%d. %s - °¡°İ: %d¿ø / ½Ã°£´ç ¼öÀÔ: %d¿ø\n", i + 1, buildings[i].name, buildings[i].price, buildings[i].incomePerHour);
+        printf("%d. %s - ê°€ê²©: %dì› / ì‹œê°„ë‹¹ ìˆ˜ì…: %dì›\n", i + 1, buildings[i].name, buildings[i].price, buildings[i].incomePerHour);
     }
     int choice;
     scanf_s("%d", &choice);
@@ -100,55 +99,82 @@ void buyBuilding() {
         Asset* building = &buildings[choice - 1];
         if (money >= building->price) {
             money -= building->price;
-            building->owned = 1;
-            printf("%s¸¦ ±¸¸ÅÇß½À´Ï´Ù!\n", building->name);
+            building->owned++;
+            printf("%së¥¼ êµ¬ë§¤í–ˆìŠµë‹ˆë‹¤!\n", building->name);
         }
         else {
-            printf("µ·ÀÌ ºÎÁ·ÇÕ´Ï´Ù!\n");
+            printf("ëˆì´ ë¶€ì¡±í•©ë‹ˆë‹¤!\n");
         }
     }
     else {
-        printf("Àß¸øµÈ ¼±ÅÃÀÔ´Ï´Ù!\n");
+        printf("ì˜ëª»ëœ ì„ íƒì…ë‹ˆë‹¤!\n");
     }
     passTime();
 }
 
+//10ë§Œì› ëª¨ì˜€ëŠ”ì§€ í™•ì¸ ë° ê²Œì„ ì§„í–‰ ì—¬ë¶€ ì¡°ì‚¬
+int checkMoney() {
+    if (money >= 100000 && winStatus == 0)
+    {
+        winStatus = 1;
+        char ans;
+
+        printf("\nì¶•í•˜í•©ë‹ˆë‹¤! %dì¼ %dì‹œê°„ ë§Œì— 10ë§Œì›ì„ ëª¨ì•˜ìŠµë‹ˆë‹¤!\n", day, hour);
+        printf("ê³„ì† ì§„í–‰í•˜ì‹œê² ìŠµë‹ˆê¹Œ? (Y/N)\n");
+        char ch = getchar(); //ë²„í¼ ì œê±°
+        while (1)
+        {
+            scanf_s("%c", &ans);
+
+            if (ans == 'y' || ans == 'Y')
+                return 1;
+            else if (ans == 'n' || ans == 'N')
+                return 0;
+            else
+                printf("ì˜ëª»ëœ ì…ë ¥ì…ë‹ˆë‹¤.\n");
+        }
+    }
+}
 int main() {
     char input[50];
-    srand(time(NULL));  // ·£´ı ½Ãµå ¼³Á¤
-
-    printf("=== °ÅÁö Å°¿ì±â °ÔÀÓ ½ÃÀÛ ===\n");
-
-    while (money < 100000) {
+    int ContinueOrNot = 1;
+    printf("=== ê±°ì§€ í‚¤ìš°ê¸° ê²Œì„ ì‹œì‘ ===\n");
+    while (1) {
         showStatus();
-        printf("\n¹«¾ùÀ» ÇÏ½Ã°Ú½À´Ï±î? (±¸°É / °¡°Ô / ºÎµ¿»ê)\n");
+        printf("\në¬´ì—‡ì„ í•˜ì‹œê² ìŠµë‹ˆê¹Œ? (êµ¬ê±¸ / ê°€ê²Œ / ë¶€ë™ì‚°/ ì¢…ë£Œ)\n");
         scanf_s("%s", input, 50);
-
-        if (strcmp(input, "±¸°É") == 0) {
-            int chance = rand() % 100; // 0ºÎÅÍ 99±îÁöÀÇ ·£´ı ¼ıÀÚ
-            if (chance < 20) {  // 20% È®·ü
+        if (strcmp(input, "êµ¬ê±¸") == 0) {
+            int chance = rand() % 100; // 0ë¶€í„° 99ê¹Œì§€ì˜ ëœë¤ ìˆ«ì
+            if (chance < 20) {  // 20% í™•ë¥ 
                 money += 500;
-                printf("Çà¿îÀÌ´Ù! ±¸°ÉÇØ¼­ 500¿øÀ» ¾ò¾ú½À´Ï´Ù!\n");
+                printf("í–‰ìš´ì´ë‹¤! êµ¬ê±¸í•´ì„œ 500ì›ì„ ì–»ì—ˆìŠµë‹ˆë‹¤!\n");
             }
             else {
                 money += 200;
-                printf("±¸°ÉÇØ¼­ 200¿øÀ» ¾ò¾ú½À´Ï´Ù!\n");
+                printf("êµ¬ê±¸í•´ì„œ 200ì›ì„ ì–»ì—ˆìŠµë‹ˆë‹¤!\n");
             }
             passTime();
         }
-        else if (strcmp(input, "°¡°Ô") == 0) {
+        else if (strcmp(input, "ê°€ê²Œ") == 0) {
             buyShop();
         }
-        else if (strcmp(input, "ºÎµ¿»ê") == 0) {
+        else if (strcmp(input, "ë¶€ë™ì‚°") == 0) {
             buyBuilding();
         }
-        else {
-            printf("Àß¸øµÈ ÀÔ·ÂÀÔ´Ï´Ù!\n");
+        else if (strcmp(input, "ì¢…ë£Œ") == 0) {
+            break;
         }
-    }
+        else {
+            printf("ì˜ëª»ëœ ì…ë ¥ì…ë‹ˆë‹¤!\n");
+        }
+        ContinueOrNot = checkMoney();
 
-    printf("\nÃàÇÏÇÕ´Ï´Ù! %dÀÏ %d½Ã°£ ¸¸¿¡ 10¸¸¿øÀ» ¸ğ¾Ò½À´Ï´Ù!\n", day, hour);
-    printf("=== °ÔÀÓ Á¾·á ===\n");
+        if (ContinueOrNot)
+            continue;
+        else
+            break;
+    }
+    printf("=== ê²Œì„ ì¢…ë£Œ ===\n");
 
     return 0;
 }
